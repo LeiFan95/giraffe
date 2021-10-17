@@ -34,7 +34,6 @@ model = config.get_model(cfg, device=device)
 checkpoint_io = CheckpointIO(out_dir, model=model)
 checkpoint_io.load(cfg['test']['model_file'])
 
-
 # Generate
 model.eval()
 

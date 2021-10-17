@@ -7,7 +7,7 @@ from im2scene.common import (
 import numpy as np
 from scipy.spatial.transform import Rotation as Rot
 from im2scene.camera import get_camera_mat, get_random_pose, get_camera_pose
-
+from im2scene.debugtool import var_shape, var_print, get_can_pose
 
 class Generator(nn.Module):
     ''' GIRAFFE Generator Class.
@@ -35,13 +35,12 @@ class Generator(nn.Module):
             composition operator instead
     '''
 
-    def __init__(self, device, z_dim=256, z_dim_bg=128, decoder=None,
+    def __init__(self, device, z_dim=256, z_dim_bg=128, pose_encoder=None, decoder=None,
                  range_u=(0, 0), range_v=(0.25, 0.25), n_ray_samples=64,
                  range_radius=(2.732, 2.732), depth_range=[0.5, 6.],
                  background_generator=None,
                  bounding_box_generator=None, resolution_vol=16,
-                 neural_renderer=None,
-                 fov=49.13,
+                 neural_renderer=None, fov=49.13,
                  backround_rotation_range=[0., 0.],
                  sample_object_existance=False,
                  use_max_composition=False, **kwargs):
@@ -63,6 +62,10 @@ class Generator(nn.Module):
 
         self.camera_matrix = get_camera_mat(fov=fov).to(device)
 
+        if pose_encoder is not None:
+            self.pose_encoder = pose_encoder.to(device)
+        else:
+            self.pose_encoder = None
         if decoder is not None:
             self.decoder = decoder.to(device)
         else:
@@ -81,11 +84,16 @@ class Generator(nn.Module):
         else:
             self.neural_renderer = None
 
-    def forward(self, batch_size=32, latent_codes=None, camera_matrices=None,
-                transformations=None, bg_rotation=None, mode="training", it=0,
-                return_alpha_map=False,
-                not_render_background=False,
-                only_render_background=False):
+    # def refine_transformations(self, transformations, keypoint_3d):
+    #     batch_size = keypoint_3d.shape[0]
+    #     pass
+
+    def forward(self, keypoint_3d, keypoint_3d_diff, skeleton=None, 
+                latent_codes=None, camera_matrices=None, transformations=None, 
+                bg_rotation=None, mode="training", it=0,
+                return_alpha_map=False, not_render_background=False,
+                only_render_background=False, train_static=False):
+        batch_size = keypoint_3d.shape[0]
         if latent_codes is None:
             latent_codes = self.get_latent_codes(batch_size)
 
@@ -94,20 +102,28 @@ class Generator(nn.Module):
 
         if transformations is None:
             transformations = self.get_random_transformations(batch_size)
+        # if train_static:
+        #     transformations = self.get_static_transformations(batch_size)
 
         if bg_rotation is None:
             bg_rotation = self.get_random_bg_rotation(batch_size)
 
         if return_alpha_map:
             rgb_v, alpha_map = self.volume_render_image(
-                latent_codes, camera_matrices, transformations, bg_rotation,
-                mode=mode, it=it, return_alpha_map=True,
-                not_render_background=not_render_background)
-            return alpha_map
+                keypoint_3d, keypoint_3d_diff, latent_codes, camera_matrices, transformations,
+                train_static, bg_rotation, skeleton=skeleton, mode=mode, it=it, 
+                return_alpha_map=True, not_render_background=not_render_background,
+                only_render_background=only_render_background)
+            if self.neural_renderer is not None:
+                rgb = self.neural_renderer(rgb_v)
+            else:
+                rgb = rgb_v
+            return rgb, alpha_map
         else:
             rgb_v = self.volume_render_image(
-                latent_codes, camera_matrices, transformations, bg_rotation,
-                mode=mode, it=it, not_render_background=not_render_background,
+                keypoint_3d, keypoint_3d_diff, latent_codes, camera_matrices, transformations, 
+                train_static, bg_rotation, skeleton=skeleton, mode=mode, it=it, 
+                not_render_background=not_render_background,
                 only_render_background=only_render_background)
             if self.neural_renderer is not None:
                 rgb = self.neural_renderer(rgb_v)
@@ -143,7 +159,7 @@ class Generator(nn.Module):
 
     def get_vis_dict(self, batch_size=32):
         vis_dict = {
-            'batch_size': batch_size,
+            # 'batch_size': batch_size,
             'latent_codes': self.get_latent_codes(batch_size),
             'camera_matrices': self.get_random_camera(batch_size),
             'transformations': self.get_random_transformations(batch_size),
@@ -197,6 +213,13 @@ class Generator(nn.Module):
         if to_device:
             r = r.to(self.device)
         return r
+
+    def get_static_transformations(self, batch_size=32, to_device=True):
+        device = self.device
+        s, t, R = self.bounding_box_generator(batch_size, static=True)
+        if to_device:
+            s, t, R = s.to(device), t.to(device), R.to(device)
+        return s, t, R
 
     def get_random_transformations(self, batch_size=32, to_device=True):
         device = self.device
@@ -304,14 +327,17 @@ class Generator(nn.Module):
             camera_world, transformations, i)
         ray_i = pixels_world_i - camera_world_i
 
+        # camera_world_i : [32, 256, 1, 3] + \
+        # di: [32, 256, 64, 1] * ray_i: [32, 256, 1, 3]
+        # -> p_i: [32, 256, 64, 3]
         p_i = camera_world_i.unsqueeze(-2).contiguous() + \
             di.unsqueeze(-1).contiguous() * ray_i.unsqueeze(-2).contiguous()
         ray_i = ray_i.unsqueeze(-2).repeat(1, 1, n_steps, 1)
+
         assert(p_i.shape == ray_i.shape)
 
         p_i = p_i.reshape(batch_size, -1, 3)
         ray_i = ray_i.reshape(batch_size, -1, 3)
-
         return p_i, ray_i
 
     def composite_function(self, sigma, feat):
@@ -335,12 +361,12 @@ class Generator(nn.Module):
             feat_weighted = feat.squeeze(0)
         return sigma_sum, feat_weighted
 
-    def calc_volume_weights(self, z_vals, ray_vector, sigma, last_dist=1e10):
-        dists = z_vals[..., 1:] - z_vals[..., :-1]
+    def calc_volume_weights(self, di, ray_vector, sigma, last_dist=1e10):
+        dists = di[..., 1:] - di[..., :-1]  # distance of neighboring di
         dists = torch.cat([dists, torch.ones_like(
-            z_vals[..., :1]) * last_dist], dim=-1)
+            di[..., :1]) * last_dist], dim=-1)
         dists = dists * torch.norm(ray_vector, dim=-1, keepdim=True)
-        alpha = 1.-torch.exp(-F.relu(sigma)*dists)
+        alpha = 1. - torch.exp(-F.relu(sigma)*dists)    # [32, 256, 64]
         weights = alpha * \
             torch.cumprod(torch.cat([
                 torch.ones_like(alpha[:, :, :1]),
@@ -382,10 +408,43 @@ class Generator(nn.Module):
         object_existance = object_existance.astype(np.bool)
         return object_existance
 
-    def volume_render_image(self, latent_codes, camera_matrices,
-                            transformations, bg_rotation, mode='training',
-                            it=0, return_alpha_map=False,
-                            not_render_background=False,
+    # [32, 16384, 3], [32, 17, 3]
+    def get_delta_p(self, p_i, keypoint_3d_diff):
+        batch_size = p_i.shape[0]
+        num_parts = keypoint_3d_diff.shape[1]
+        num_points = p_i.shape[1]
+        delta_p = torch.zeros_like(p_i)
+        can_pose = get_can_pose(batch_size)
+
+        dists = torch.cdist(p_i, can_pose, p=2) # [32, 16384, 17]
+        nearest_dists, indices = torch.min(dists, dim=-1)   # [32, 16384], [32, 16384]
+        invalid_mask = (nearest_dists > 0.4) # [32, 16384]
+
+        # [32, 16384, 3] = [32, 17, 3] [32, 16384]
+        for b in range(batch_size):
+            delta_p[b] = keypoint_3d_diff[b, indices[b]]
+            delta_p[b, invalid_mask[b]] = 0
+        return delta_p, invalid_mask
+
+    def get_delta_p_inverse(self, p_i, keypoint_3d, keypoint_3d_diff):      # keypoint_3d: [32, 17, 3]
+        batch_size = p_i.shape[0]
+        num_parts = keypoint_3d_diff.shape[1]
+        num_points = p_i.shape[1]
+        delta_p = torch.zeros_like(p_i)
+
+        dists = torch.cdist(p_i, keypoint_3d, p=2) # [32, 16384, 17]
+        nearest_dists, indices = torch.min(dists, dim=-1)   # [32, 16384], [32, 16384]
+        invalid_mask = (nearest_dists > 0.15) # [32, 16384]
+
+        # [32, 16384, 3] = [32, 17, 3] [32, 16384]
+        for b in range(batch_size):
+            delta_p[b] = -keypoint_3d_diff[b, indices[b]]
+            delta_p[b, invalid_mask[b]] = 0
+        return delta_p, invalid_mask
+
+    def volume_render_image(self, keypoint_3d, keypoint_3d_diff, latent_codes, camera_matrices, transformations,
+                            train_static, bg_rotation, skeleton=None, mode='training', 
+                            it=0, return_alpha_map=False, not_render_background=False, 
                             only_render_background=False):
         res = self.resolution_vol
         device = self.device
@@ -422,14 +481,33 @@ class Generator(nn.Module):
         if only_render_background:
             n_iter = 1
             n_boxes = 0
+        # TODO not for different image size
+        # if skeleton != None:
+            # [32, 16, 16, 64] -> [32, 256, 64]
+            # skeleton = skeleton.permute(0, 2, 3, 1).repeat(1, 1, 1, self.n_ray_samples)
+            # skeleton = skeleton.reshape(batch_size, n_points, n_steps)
         for i in range(n_iter):
+            # TODO current only suport one human 
+            keypoint_3d_i = keypoint_3d # [32, 17, 3]
+            keypoint_3d_diff_i = keypoint_3d_diff # [32, 17, 3]
+            # change axis
             if i < n_boxes:  # Object
+                # if train_static:
+                #     var_print('transformations_static', transformations)
                 p_i, r_i = self.get_evaluation_points(
                     pixels_world, camera_world, di, transformations, i)
+                
+                # delta_p_i, invalid_mask = self.get_delta_p(p_i, keypoint_3d_diff_i)
+                delta_p_i, invalid_mask = self.get_delta_p_inverse(p_i, keypoint_3d_i, keypoint_3d_diff_i)
+                p_i = p_i + delta_p_i
+
                 z_shape_i, z_app_i = z_shape_obj[:, i], z_app_obj[:, i]
 
+                # sigma_i: [32, 16384]  p_i: [32, 16384, 3] <- p_i: [32, 256, 64, 3]
+                # sigma_i is in the scene space and p_i is in the local space.
+                # we use mask_box to have the cube in the local space and then mask out
+                # values in the scene space.
                 feat_i, sigma_i = self.decoder(p_i, r_i, z_shape_i, z_app_i)
-
                 if mode == 'training':
                     # As done in NeRF, add noise during training
                     sigma_i += torch.randn_like(sigma_i)
@@ -438,20 +516,37 @@ class Generator(nn.Module):
                 padd = 0.1
                 mask_box = torch.all(
                     p_i <= 1. + padd, dim=-1) & torch.all(
-                        p_i >= -1. - padd, dim=-1)
+                        p_i >= -1. - padd, dim=-1)  # [32, 16384]
                 sigma_i[mask_box == 0] = 0.
+
+                # Mask out non-movement
+                for b in range(batch_size):
+                    sigma_i[b, invalid_mask[b]] = 0.
+                    # sigma_i[b, ~invalid_mask[b]] = 1.
 
                 # Reshape
                 sigma_i = sigma_i.reshape(batch_size, n_points, n_steps)
                 feat_i = feat_i.reshape(batch_size, n_points, n_steps, -1)
+
             else:  # Background
+                # TODO check here
                 p_bg, r_bg = self.get_evaluation_points_bg(
                     pixels_world, camera_world, di, bg_rotation)
 
+                _, invalid_mask = self.get_delta_p_inverse(p_bg, keypoint_3d_i, keypoint_3d_diff_i)
+
                 feat_i, sigma_i = self.background_generator(
                     p_bg, r_bg, z_shape_bg, z_app_bg)
+                # Mask out movement
+                for b in range(batch_size):
+                    sigma_i[b, ~invalid_mask[b]] = 0.
+
                 sigma_i = sigma_i.reshape(batch_size, n_points, n_steps)
                 feat_i = feat_i.reshape(batch_size, n_points, n_steps, -1)
+
+                # Mask out values outside of skeleton
+                # if skeleton != None and train_static:
+                #     sigma_i[skeleton!=0] = 0.
 
                 if mode == 'training':
                     # As done in NeRF, add noise during training
@@ -476,12 +571,16 @@ class Generator(nn.Module):
             sigma[object_existance == 0] = 0.
             sigma = sigma.reshape(*sigma_shape)
 
-        # Composite
+        # Composite features with normalized sigma, sigma_sum: sum of unormalized sigma
+        # [32, 256, 64], [32, 256, 64, 128] = ([2, 32, 256, 64], [2, 32, 256, 64, 128])
+        # TODO manipulate object sigma to force the 3rd dimension matching skeleton
         sigma_sum, feat_weighted = self.composite_function(sigma, feat)
 
         # Get Volume Weights
+        # the weights are descresed with larger distances
+        # [32, 256, 64] = ([32, 256, 64], [32, 256, 3], [32, 256, 64])
         weights = self.calc_volume_weights(di, ray_vector, sigma_sum)
-        feat_map = torch.sum(weights.unsqueeze(-1) * feat_weighted, dim=-2)
+        feat_map = torch.sum(weights.unsqueeze(-1) * feat_weighted, dim=-2) # [32, 256, 128]
 
         # Reformat output
         feat_map = feat_map.permute(0, 2, 1).reshape(
@@ -491,7 +590,8 @@ class Generator(nn.Module):
             n_maps = sigma.shape[0]
             acc_maps = []
             for i in range(n_maps - 1):
-                sigma_obj_sum = torch.sum(sigma[i:i+1], dim=0)
+                sigma_obj_sum = torch.sum(sigma[i:i+1], dim=0)  # [16, 256, 64]
+
                 weights_obj = self.calc_volume_weights(
                     di, ray_vector, sigma_obj_sum, last_dist=0.)
                 acc_map = torch.sum(weights_obj, dim=-1, keepdim=True)

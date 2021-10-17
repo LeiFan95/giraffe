@@ -1,0 +1,28 @@
+# add pose estimator to the original version
+data:
+  dataset_name: h36m
+  idx_txt: /data/leifan/dataset/Human3.6/h36m/annot/train_images.txt
+  path: /data/leifan/dataset/Human3.6/h36m/crop/*.jpg
+  h5_path: /data/leifan/dataset/Human3.6/h36m/annot/train_crop.h5
+  fid_file: /data/leifan/dataset/Human3.6/h36m/h36m_64.npz
+  relations: [[0, 4], [0, 7], [0, 1], [1, 2], 
+        [2, 3], [4, 5], [5, 6], [7, 8], [8, 9], [9, 10], 
+        [8, 11], [8, 14], [11, 12], [12, 13], [14, 15], [15, 16]]
+  img_size: 64
+  random_crop: False
+model:
+  num_parts: 17
+  pose_estimator: simple
+  model_name: model.pt
+  bounding_box_generator_kwargs:
+    scale_range_min: [0.45, 0.45, 0.45]
+    scale_range_max: [0.55, 0.55, 0.55]
+    translation_range_min: [-0.15, -0.15, -0.15]
+    translation_range_max: [0.15, 0.15, 0]
+  generator_kwargs:
+    range_v: [0.3, 0.5]
+    fov: 10
+training:
+  out_dir: out/human_test
+  multi_gpu: False
+  # visualize_every: 10

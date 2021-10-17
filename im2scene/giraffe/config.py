@@ -13,6 +13,10 @@ def get_model(cfg, device=None, len_dataset=0, **kwargs):
         device (device): pytorch device
         len_dataset (int): length of dataset
     '''
+    # novel parameters
+    num_parts = cfg['model']['num_parts']
+    pose_encoder = cfg['model']['pose_encoder']
+
     decoder = cfg['model']['decoder']
     discriminator = cfg['model']['discriminator']
     generator = cfg['model']['generator']
@@ -31,7 +35,11 @@ def get_model(cfg, device=None, len_dataset=0, **kwargs):
     z_dim_bg = cfg['model']['z_dim_bg']
     img_size = cfg['data']['img_size']
 
-    # Load always the decoder
+    # pose_encoder = models.pose_encoder_dict[pose_encoder](
+    #     num_parts=num_parts
+    # )
+    pose_encoder = None
+
     decoder = models.decoder_dict[decoder](
         z_dim=z_dim, **decoder_kwargs
     )
@@ -54,8 +62,8 @@ def get_model(cfg, device=None, len_dataset=0, **kwargs):
 
     if generator is not None:
         generator = models.generator_dict[generator](
-            device, z_dim=z_dim, z_dim_bg=z_dim_bg, decoder=decoder,
-            background_generator=background_generator,
+            device, z_dim=z_dim, z_dim_bg=z_dim_bg, pose_encoder=pose_encoder, 
+            decoder=decoder, background_generator=background_generator,
             bounding_box_generator=bounding_box_generator,
             neural_renderer=neural_renderer, **generator_kwargs)
 
@@ -66,8 +74,8 @@ def get_model(cfg, device=None, len_dataset=0, **kwargs):
 
     model = models.GIRAFFE(
         device=device,
-        discriminator=discriminator, generator=generator,
-        generator_test=generator_test,
+        discriminator=discriminator,
+        generator=generator, generator_test=generator_test,
     )
     return model
 
@@ -83,6 +91,7 @@ def get_trainer(model, optimizer, optimizer_d, cfg, device, **kwargs):
         device (device): pytorch device
     '''
     out_dir = cfg['training']['out_dir']
+    visualize_every = cfg['training']['visualize_every']
     vis_dir = os.path.join(out_dir, 'vis')
     overwrite_visualization = cfg['training']['overwrite_visualization']
     multi_gpu = cfg['training']['multi_gpu']
@@ -95,9 +104,8 @@ def get_trainer(model, optimizer, optimizer_d, cfg, device, **kwargs):
 
     trainer = training.Trainer(
         model, optimizer, optimizer_d, device=device, vis_dir=vis_dir,
-        overwrite_visualization=overwrite_visualization, multi_gpu=multi_gpu,
-        fid_dict=fid_dict,
-        n_eval_iterations=n_eval_iterations,
+        visualize_every=visualize_every, overwrite_visualization=overwrite_visualization, 
+        multi_gpu=multi_gpu, fid_dict=fid_dict, n_eval_iterations=n_eval_iterations,
     )
 
     return trainer

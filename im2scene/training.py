@@ -2,20 +2,18 @@ from collections import defaultdict
 from torch import autograd
 import torch.nn.functional as F
 import numpy as np
-
+import tqdm
 
 class BaseTrainer(object):
     ''' Base trainer class.
     '''
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, val_loader, *args, **kwargs):
         ''' Performs an evaluation.
         '''
         eval_list = defaultdict(list)
 
-        # for data in tqdm(val_loader):
-        eval_step_dict = self.eval_step()
-
+        eval_step_dict = self.eval_step(val_loader)
         for k, v in eval_step_dict.items():
             eval_list[k].append(v)
         # eval_dict = {k: v for k, v in eval_list.items()}
@@ -37,11 +35,17 @@ class BaseTrainer(object):
         '''
         raise NotImplementedError
 
-
-def toggle_grad(model, requires_grad):
+def toggle_grad_t(model, requires_grad):
     for p in model.parameters():
         p.requires_grad_(requires_grad)
 
+def toggle_grad(model, requires_grad, mode='train'):
+    for p in model.parameters():
+        p.requires_grad_(requires_grad)
+    if mode == 'train':
+        return model.train()
+    elif mode == 'eval':
+        return model.eval()
 
 def compute_grad2(d_out, x_in):
     batch_size = x_in.size(0)

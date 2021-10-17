@@ -34,7 +34,8 @@ class DCDiscriminator(nn.Module):
             x = x[:, :self.in_dim]
         for layer in self.blocks:
             x = self.actvn(layer(x))
-
+        
+        from im2scene.debugtool import var_shape
         out = self.conv_out(x)
         out = out.reshape(batch_size, 1)
         return out

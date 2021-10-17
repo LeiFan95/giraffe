@@ -1,0 +1,174 @@
+nohup: ignoring input
+Start loading file addresses ...
+done! time: 0.9888582229614258
+Number of images found: 289508
+Start loading file addresses ...
+done! time: 1.103104591369629
+Number of images found: 289508
+No model checkpoint found.
+Current best validation metric (fid_score): inf
+[(levelname)s] [Epoch 00] it=000, time=1.634, generator: 0.6908, discriminator: 1.3861, regularizer: 0.0022
+[(levelname)s] Visualizing
+[(levelname)s] Saving checkpoint
+[(levelname)s] Backup checkpoint
+[(levelname)s] [Epoch 00] it=010, time=2.642, generator: 0.6982, discriminator: 1.0573, regularizer: 0.0636
+[(levelname)s] [Epoch 00] it=020, time=2.332, generator: 0.5946, discriminator: 1.2185, regularizer: 0.0605
+[(levelname)s] [Epoch 00] it=030, time=2.371, generator: 0.9984, discriminator: 1.3983, regularizer: 0.0621
+[(levelname)s] [Epoch 00] it=040, time=2.325, generator: 0.6318, discriminator: 1.2505, regularizer: 0.0500
+[(levelname)s] [Epoch 00] it=050, time=2.362, generator: 0.8452, discriminator: 1.3356, regularizer: 0.0557
+[(levelname)s] [Epoch 00] it=060, time=2.397, generator: 0.7064, discriminator: 1.2714, regularizer: 0.0476
+[(levelname)s] [Epoch 00] it=070, time=2.349, generator: 0.6471, discriminator: 1.2478, regularizer: 0.0516
+[(levelname)s] [Epoch 00] it=080, time=2.358, generator: 0.6570, discriminator: 1.2301, regularizer: 0.0520
+[(levelname)s] [Epoch 00] it=090, time=2.362, generator: 0.6846, discriminator: 1.2496, regularizer: 0.0644
+[(levelname)s] [Epoch 00] it=100, time=2.352, generator: 0.6280, discriminator: 1.2376, regularizer: 0.0571
+[(levelname)s] [Epoch 00] it=110, time=2.332, generator: 0.7186, discriminator: 1.2359, regularizer: 0.0589
+[(levelname)s] [Epoch 00] it=120, time=2.394, generator: 0.6694, discriminator: 1.2155, regularizer: 0.0567
+[(levelname)s] [Epoch 00] it=130, time=2.319, generator: 0.5724, discriminator: 1.2534, regularizer: 0.0661
+[(levelname)s] [Epoch 00] it=140, time=2.358, generator: 0.8739, discriminator: 1.3007, regularizer: 0.0554
+[(levelname)s] [Epoch 00] it=150, time=2.369, generator: 0.7488, discriminator: 1.2095, regularizer: 0.0723
+[(levelname)s] [Epoch 00] it=160, time=2.366, generator: 0.5984, discriminator: 1.2123, regularizer: 0.0738
+[(levelname)s] [Epoch 00] it=170, time=2.260, generator: 0.8753, discriminator: 1.2438, regularizer: 0.0587
+[(levelname)s] [Epoch 00] it=180, time=2.266, generator: 0.7046, discriminator: 1.1875, regularizer: 0.0660
+[(levelname)s] [Epoch 00] it=190, time=2.344, generator: 0.5960, discriminator: 1.2369, regularizer: 0.0683
+[(levelname)s] [Epoch 00] it=200, time=2.258, generator: 0.6096, discriminator: 1.2196, regularizer: 0.0616
+[(levelname)s] Visualizing
+[(levelname)s] [Epoch 00] it=210, time=2.442, generator: 0.6909, discriminator: 1.2191, regularizer: 0.0551
+[(levelname)s] [Epoch 00] it=220, time=2.259, generator: 0.5992, discriminator: 1.2387, regularizer: 0.0609
+[(levelname)s] [Epoch 00] it=230, time=2.258, generator: 0.6841, discriminator: 1.2234, regularizer: 0.0583
+[(levelname)s] [Epoch 00] it=240, time=2.264, generator: 0.6504, discriminator: 1.2589, regularizer: 0.0545
+[(levelname)s] [Epoch 00] it=250, time=2.259, generator: 0.7995, discriminator: 1.2399, regularizer: 0.0695
+[(levelname)s] [Epoch 00] it=260, time=2.308, generator: 0.6847, discriminator: 1.1962, regularizer: 0.0657
+[(levelname)s] [Epoch 00] it=270, time=2.327, generator: 0.6902, discriminator: 1.1835, regularizer: 0.0638
+[(levelname)s] [Epoch 00] it=280, time=2.280, generator: 0.6080, discriminator: 1.2234, regularizer: 0.0679
+[(levelname)s] [Epoch 00] it=290, time=2.302, generator: 0.6599, discriminator: 1.1604, regularizer: 0.0590
+[(levelname)s] [Epoch 00] it=300, time=2.293, generator: 0.6925, discriminator: 1.2061, regularizer: 0.0684
+[(levelname)s] [Epoch 00] it=310, time=2.332, generator: 0.6661, discriminator: 1.1837, regularizer: 0.0585
+[(levelname)s] [Epoch 00] it=320, time=2.386, generator: 0.7064, discriminator: 1.2064, regularizer: 0.0571
+[(levelname)s] [Epoch 00] it=330, time=2.341, generator: 0.7815, discriminator: 1.2437, regularizer: 0.0664
+[(levelname)s] [Epoch 00] it=340, time=2.329, generator: 0.6209, discriminator: 1.2032, regularizer: 0.0640
+[(levelname)s] [Epoch 00] it=350, time=2.364, generator: 0.7258, discriminator: 1.1779, regularizer: 0.0645
+[(levelname)s] [Epoch 00] it=360, time=2.355, generator: 0.7818, discriminator: 1.1909, regularizer: 0.0680
+[(levelname)s] [Epoch 00] it=370, time=2.302, generator: 0.7077, discriminator: 1.1774, regularizer: 0.0689
+[(levelname)s] [Epoch 00] it=380, time=2.301, generator: 0.5373, discriminator: 1.2983, regularizer: 0.0710
+[(levelname)s] [Epoch 00] it=390, time=2.354, generator: 0.6630, discriminator: 1.2081, regularizer: 0.0775
+[(levelname)s] [Epoch 00] it=400, time=2.340, generator: 0.7031, discriminator: 1.2156, regularizer: 0.0807
+[(levelname)s] Visualizing
+[(levelname)s] [Epoch 00] it=410, time=2.619, generator: 0.7950, discriminator: 1.2362, regularizer: 0.0568
+[(levelname)s] [Epoch 00] it=420, time=2.372, generator: 0.6549, discriminator: 1.1928, regularizer: 0.0679
+[(levelname)s] [Epoch 00] it=430, time=2.354, generator: 0.7476, discriminator: 1.1907, regularizer: 0.0639
+[(levelname)s] [Epoch 00] it=440, time=2.404, generator: 0.6585, discriminator: 1.1514, regularizer: 0.0695
+[(levelname)s] [Epoch 00] it=450, time=2.423, generator: 0.6563, discriminator: 1.1799, regularizer: 0.0769
+[(levelname)s] [Epoch 00] it=460, time=2.426, generator: 0.7240, discriminator: 1.1470, regularizer: 0.0775
+[(levelname)s] [Epoch 00] it=470, time=2.383, generator: 0.5793, discriminator: 1.1785, regularizer: 0.0651
+[(levelname)s] [Epoch 00] it=480, time=2.385, generator: 0.6540, discriminator: 1.1528, regularizer: 0.0780
+[(levelname)s] [Epoch 00] it=490, time=2.402, generator: 0.6718, discriminator: 1.1708, regularizer: 0.0713
+[(levelname)s] [Epoch 00] it=500, time=2.394, generator: 0.7684, discriminator: 1.1702, regularizer: 0.0750
+[(levelname)s] Saving checkpoint
+[(levelname)s] [Epoch 00] it=510, time=2.451, generator: 0.7478, discriminator: 1.1660, regularizer: 0.0752
+[(levelname)s] [Epoch 00] it=520, time=2.283, generator: 0.7994, discriminator: 1.1591, regularizer: 0.0737
+[(levelname)s] [Epoch 00] it=530, time=2.311, generator: 0.7563, discriminator: 1.2288, regularizer: 0.0761
+[(levelname)s] [Epoch 00] it=540, time=2.281, generator: 0.8147, discriminator: 1.2097, regularizer: 0.0789
+[(levelname)s] [Epoch 00] it=550, time=2.357, generator: 0.6366, discriminator: 1.2037, regularizer: 0.0871
+[(levelname)s] [Epoch 00] it=560, time=2.295, generator: 0.6909, discriminator: 1.1848, regularizer: 0.0770
+[(levelname)s] [Epoch 00] it=570, time=2.327, generator: 0.6655, discriminator: 1.1855, regularizer: 0.0797
+[(levelname)s] [Epoch 00] it=580, time=2.320, generator: 0.5295, discriminator: 1.2359, regularizer: 0.0745
+[(levelname)s] [Epoch 00] it=590, time=2.297, generator: 0.6648, discriminator: 1.1748, regularizer: 0.0740
+[(levelname)s] [Epoch 00] it=600, time=2.338, generator: 0.6079, discriminator: 1.1751, regularizer: 0.0814
+[(levelname)s] Visualizing
+[(levelname)s] [Epoch 00] it=610, time=2.542, generator: 0.6848, discriminator: 1.1696, regularizer: 0.0813
+[(levelname)s] [Epoch 00] it=620, time=2.369, generator: 0.6863, discriminator: 1.1769, regularizer: 0.0713
+[(levelname)s] [Epoch 00] it=630, time=2.304, generator: 0.6796, discriminator: 1.2326, regularizer: 0.0737
+[(levelname)s] [Epoch 00] it=640, time=2.320, generator: 0.6085, discriminator: 1.1886, regularizer: 0.0783
+[(levelname)s] [Epoch 00] it=650, time=2.306, generator: 0.6071, discriminator: 1.2007, regularizer: 0.0694
+[(levelname)s] [Epoch 00] it=660, time=2.296, generator: 0.8224, discriminator: 1.2274, regularizer: 0.0752
+[(levelname)s] [Epoch 00] it=670, time=2.305, generator: 0.6344, discriminator: 1.2043, regularizer: 0.0737
+[(levelname)s] [Epoch 00] it=680, time=2.342, generator: 0.6661, discriminator: 1.1744, regularizer: 0.0760
+[(levelname)s] [Epoch 00] it=690, time=2.401, generator: 0.8400, discriminator: 1.2607, regularizer: 0.0667
+[(levelname)s] [Epoch 00] it=700, time=2.362, generator: 0.6971, discriminator: 1.2058, regularizer: 0.0708
+[(levelname)s] [Epoch 00] it=710, time=2.316, generator: 0.7302, discriminator: 1.1843, regularizer: 0.0732
+[(levelname)s] [Epoch 00] it=720, time=2.289, generator: 0.6806, discriminator: 1.1647, regularizer: 0.0753
+[(levelname)s] [Epoch 00] it=730, time=2.363, generator: 0.7822, discriminator: 1.1938, regularizer: 0.0658
+[(levelname)s] [Epoch 00] it=740, time=2.331, generator: 0.7529, discriminator: 1.1694, regularizer: 0.0852
+[(levelname)s] [Epoch 00] it=750, time=2.294, generator: 0.7254, discriminator: 1.1805, regularizer: 0.0815
+[(levelname)s] [Epoch 00] it=760, time=2.355, generator: 0.7853, discriminator: 1.1926, regularizer: 0.0714
+[(levelname)s] [Epoch 00] it=770, time=2.351, generator: 0.6818, discriminator: 1.2204, regularizer: 0.0690
+[(levelname)s] [Epoch 00] it=780, time=2.326, generator: 0.6270, discriminator: 1.2256, regularizer: 0.0779
+[(levelname)s] [Epoch 00] it=790, time=2.363, generator: 0.6732, discriminator: 1.1827, regularizer: 0.0787
+[(levelname)s] [Epoch 00] it=800, time=2.364, generator: 0.7713, discriminator: 1.1812, regularizer: 0.0722
+[(levelname)s] Visualizing
+[(levelname)s] [Epoch 00] it=810, time=2.568, generator: 0.6961, discriminator: 1.1798, regularizer: 0.0795
+[(levelname)s] [Epoch 00] it=820, time=2.443, generator: 0.6687, discriminator: 1.1900, regularizer: 0.0757
+[(levelname)s] [Epoch 00] it=830, time=2.323, generator: 0.6875, discriminator: 1.1375, regularizer: 0.0758
+[(levelname)s] [Epoch 00] it=840, time=2.304, generator: 0.7178, discriminator: 1.1758, regularizer: 0.0804
+[(levelname)s] [Epoch 00] it=850, time=2.343, generator: 0.7348, discriminator: 1.1820, regularizer: 0.0794
+[(levelname)s] [Epoch 00] it=860, time=2.353, generator: 0.8535, discriminator: 1.2430, regularizer: 0.0726
+[(levelname)s] [Epoch 00] it=870, time=2.379, generator: 0.6231, discriminator: 1.1740, regularizer: 0.0834
+[(levelname)s] [Epoch 00] it=880, time=2.375, generator: 0.6850, discriminator: 1.1612, regularizer: 0.0824
+[(levelname)s] [Epoch 00] it=890, time=2.383, generator: 0.7288, discriminator: 1.1601, regularizer: 0.0830
+[(levelname)s] [Epoch 00] it=900, time=2.397, generator: 0.7092, discriminator: 1.1512, regularizer: 0.0813
+[(levelname)s] [Epoch 00] it=910, time=2.337, generator: 0.7064, discriminator: 1.1754, regularizer: 0.0833
+[(levelname)s] [Epoch 00] it=920, time=2.314, generator: 0.6236, discriminator: 1.1812, regularizer: 0.0862
+[(levelname)s] [Epoch 00] it=930, time=2.355, generator: 0.7591, discriminator: 1.1637, regularizer: 0.0802
+[(levelname)s] [Epoch 00] it=940, time=2.306, generator: 0.8510, discriminator: 1.2110, regularizer: 0.0795
+[(levelname)s] [Epoch 00] it=950, time=2.341, generator: 0.7711, discriminator: 1.1910, regularizer: 0.0754
+[(levelname)s] [Epoch 00] it=960, time=2.312, generator: 0.6551, discriminator: 1.1682, regularizer: 0.0818
+[(levelname)s] [Epoch 00] it=970, time=2.335, generator: 0.7545, discriminator: 1.1788, regularizer: 0.0755
+[(levelname)s] [Epoch 00] it=980, time=2.286, generator: 0.7689, discriminator: 1.1569, regularizer: 0.0817
+[(levelname)s] [Epoch 00] it=990, time=2.326, generator: 0.5814, discriminator: 1.1404, regularizer: 0.0939
+[(levelname)s] [Epoch 00] it=1000, time=2.332, generator: 0.6246, discriminator: 1.1699, regularizer: 0.0864
+[(levelname)s] Visualizing
+[(levelname)s] Saving checkpoint
+[(levelname)s] [Epoch 00] it=1010, time=2.551, generator: 0.6441, discriminator: 1.1512, regularizer: 0.0853
+[(levelname)s] [Epoch 00] it=1020, time=2.335, generator: 0.6556, discriminator: 1.1466, regularizer: 0.0790
+[(levelname)s] [Epoch 00] it=1030, time=2.322, generator: 0.7336, discriminator: 1.1958, regularizer: 0.0892
+[(levelname)s] [Epoch 00] it=1040, time=2.311, generator: 0.7752, discriminator: 1.1585, regularizer: 0.0870
+[(levelname)s] [Epoch 00] it=1050, time=2.353, generator: 0.7576, discriminator: 1.1806, regularizer: 0.0701
+[(levelname)s] [Epoch 00] it=1060, time=2.315, generator: 0.5976, discriminator: 1.2043, regularizer: 0.0766
+[(levelname)s] [Epoch 00] it=1070, time=2.352, generator: 0.6288, discriminator: 1.1441, regularizer: 0.0823
+[(levelname)s] [Epoch 00] it=1080, time=2.352, generator: 0.7300, discriminator: 1.1619, regularizer: 0.0787
+[(levelname)s] [Epoch 00] it=1090, time=2.362, generator: 0.6647, discriminator: 1.1787, regularizer: 0.0832
+[(levelname)s] [Epoch 00] it=1100, time=2.326, generator: 0.7319, discriminator: 1.1666, regularizer: 0.0782
+[(levelname)s] [Epoch 00] it=1110, time=2.394, generator: 0.7393, discriminator: 1.2038, regularizer: 0.0814
+[(levelname)s] [Epoch 00] it=1120, time=2.395, generator: 0.8035, discriminator: 1.1754, regularizer: 0.0729
+[(levelname)s] [Epoch 00] it=1130, time=2.304, generator: 0.6749, discriminator: 1.1978, regularizer: 0.0853
+[(levelname)s] [Epoch 00] it=1140, time=2.316, generator: 0.6331, discriminator: 1.1455, regularizer: 0.0768
+[(levelname)s] [Epoch 00] it=1150, time=2.282, generator: 0.7433, discriminator: 1.1589, regularizer: 0.0691
+[(levelname)s] [Epoch 00] it=1160, time=2.302, generator: 0.7404, discriminator: 1.1709, regularizer: 0.0781
+[(levelname)s] [Epoch 00] it=1170, time=2.330, generator: 0.6583, discriminator: 1.1577, regularizer: 0.0781
+[(levelname)s] [Epoch 00] it=1180, time=2.307, generator: 0.7561, discriminator: 1.1630, regularizer: 0.0754
+[(levelname)s] [Epoch 00] it=1190, time=2.389, generator: 0.8017, discriminator: 1.1952, regularizer: 0.0827
+[(levelname)s] [Epoch 00] it=1200, time=2.369, generator: 0.6589, discriminator: 1.1841, regularizer: 0.0764
+[(levelname)s] Visualizing
+[(levelname)s] [Epoch 00] it=1210, time=2.520, generator: 0.7002, discriminator: 1.1697, regularizer: 0.0742
+[(levelname)s] [Epoch 00] it=1220, time=2.321, generator: 0.7086, discriminator: 1.1426, regularizer: 0.0803
+[(levelname)s] [Epoch 00] it=1230, time=2.363, generator: 0.6438, discriminator: 1.1717, regularizer: 0.0835
+[(levelname)s] [Epoch 00] it=1240, time=2.283, generator: 0.6276, discriminator: 1.1697, regularizer: 0.0846
+[(levelname)s] [Epoch 00] it=1250, time=2.345, generator: 0.7608, discriminator: 1.2085, regularizer: 0.0863
+[(levelname)s] [Epoch 00] it=1260, time=2.292, generator: 0.6274, discriminator: 1.1612, regularizer: 0.0774
+[(levelname)s] [Epoch 00] it=1270, time=2.341, generator: 0.7276, discriminator: 1.1859, regularizer: 0.0797
+[(levelname)s] [Epoch 00] it=1280, time=2.368, generator: 0.7106, discriminator: 1.1666, regularizer: 0.0762
+[(levelname)s] [Epoch 00] it=1290, time=2.321, generator: 0.6887, discriminator: 1.1719, regularizer: 0.0808
+[(levelname)s] [Epoch 00] it=1300, time=2.314, generator: 0.7225, discriminator: 1.1618, regularizer: 0.0760
+[(levelname)s] [Epoch 00] it=1310, time=2.306, generator: 0.6569, discriminator: 1.1598, regularizer: 0.0755
+[(levelname)s] [Epoch 00] it=1320, time=2.323, generator: 0.7532, discriminator: 1.1576, regularizer: 0.0928
+[(levelname)s] [Epoch 00] it=1330, time=2.299, generator: 0.6430, discriminator: 1.1815, regularizer: 0.0744
+[(levelname)s] [Epoch 00] it=1340, time=2.307, generator: 0.8307, discriminator: 1.1931, regularizer: 0.0706
+[(levelname)s] [Epoch 00] it=1350, time=2.339, generator: 0.6558, discriminator: 1.1867, regularizer: 0.0779
+[(levelname)s] [Epoch 00] it=1360, time=2.345, generator: 0.6521, discriminator: 1.2109, regularizer: 0.0797
+[(levelname)s] [Epoch 00] it=1370, time=2.346, generator: 0.6762, discriminator: 1.1448, regularizer: 0.0740
+[(levelname)s] [Epoch 00] it=1380, time=2.315, generator: 0.6039, discriminator: 1.1838, regularizer: 0.0733
+[(levelname)s] [Epoch 00] it=1390, time=2.304, generator: 0.6318, discriminator: 1.1767, regularizer: 0.0728
+[(levelname)s] [Epoch 00] it=1400, time=2.324, generator: 0.6775, discriminator: 1.2138, regularizer: 0.0694
+[(levelname)s] Visualizing
+[(levelname)s] [Epoch 00] it=1410, time=2.494, generator: 0.7406, discriminator: 1.2081, regularizer: 0.0679
+[(levelname)s] [Epoch 00] it=1420, time=2.281, generator: 0.6415, discriminator: 1.1872, regularizer: 0.0740
+[(levelname)s] [Epoch 00] it=1430, time=2.309, generator: 0.7006, discriminator: 1.1815, regularizer: 0.0752
+[(levelname)s] [Epoch 00] it=1440, time=2.315, generator: 0.6816, discriminator: 1.1436, regularizer: 0.0788
+[(levelname)s] [Epoch 00] it=1450, time=2.341, generator: 0.6106, discriminator: 1.2015, regularizer: 0.0803
+[(levelname)s] [Epoch 00] it=1460, time=2.395, generator: 0.6829, discriminator: 1.1869, regularizer: 0.0726
+[(levelname)s] [Epoch 00] it=1470, time=2.262, generator: 0.6576, discriminator: 1.2007, regularizer: 0.0739
+[(levelname)s] [Epoch 00] it=1480, time=2.272, generator: 0.6454, discriminator: 1.1596, regularizer: 0.0823
+[(levelname)s] [Epoch 00] it=1490, time=2.300, generator: 0.6850, discriminator: 1.1964, regularizer: 0.0754
+[(levelname)s] [Epoch 00] it=1500, time=2.335, generator: 0.7315, discriminator: 1.1457, regularizer: 0.0784
+[(levelname)s] Saving checkpoint
+[(levelname)s] [Epoch 00] it=1510, time=2.386, generator: 0.7266, discriminator: 1.1474, regularizer: 0.0769

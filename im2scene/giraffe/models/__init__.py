@@ -1,9 +1,13 @@
+from torch._C import device
 import torch.nn as nn
 from im2scene.giraffe.models import (
-    decoder, generator, bounding_box_generator, neural_renderer)
-
+    decoder, generator, bounding_box_generator, neural_renderer, posenet, pose_encoder)
 
 # Dictionaries
+pose_encoder_dict = {
+    'simple': pose_encoder.PoseEncoder,
+}
+
 decoder_dict = {
     'simple': decoder.Decoder,
 }
@@ -35,24 +39,20 @@ class GIRAFFE(nn.Module):
         generator_test (nn.Module): generator_test network
     '''
 
-    def __init__(self, device=None,
-                 discriminator=None, generator=None, generator_test=None,
+    def __init__(self, device=None, discriminator=None, generator=None, generator_test=None,
                  **kwargs):
         super().__init__()
+        self.device = device
 
-        if discriminator is not None:
-            self.discriminator = discriminator.to(device)
-        else:
-            self.discriminator = None
-        if generator is not None:
-            self.generator = generator.to(device)
-        else:
-            self.generator = None
+        self.discriminator = self.to_device(discriminator)
+        self.generator = self.to_device(generator)
+        self.generator_test = self.to_device(generator_test)
 
-        if generator_test is not None:
-            self.generator_test = generator_test.to(device)
+    def to_device(self, module):
+        if module is not None:
+            return module.to(self.device)
         else:
-            self.generator_test = None
+            return None
 
     def forward(self, batch_size, **kwargs):
         gen = self.generator_test

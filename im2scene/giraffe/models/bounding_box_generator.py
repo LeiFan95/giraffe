@@ -151,7 +151,26 @@ class BoundingBoxGenerator(nn.Module):
             batch_size, self.n_boxes, -1).cuda().float()
         return s, t, R
 
-    def forward(self, batch_size=32):
-        s, t, R = self.get_random_offset(batch_size)
+    def get_static_offset(self, batch_size):
+        n_boxes = self.n_boxes
+        # Sample sizes
+        ones = torch.mul(torch.ones(batch_size, n_boxes, 3), 0.5)
+        s = self.scale_min + ones * self.scale_range
+        t = self.translation_min + ones * self.translation_range
+
+        def r_val(): return self.rotation_range[0] + torch.mul((
+            self.rotation_range[1] - self.rotation_range[0]), 0.5)
+        R = [torch.from_numpy(
+            Rot.from_euler('z', r_val() * 2 * np.pi).as_dcm())
+            for i in range(batch_size * self.n_boxes)]
+        R = torch.stack(R, dim=0).reshape(
+            batch_size, self.n_boxes, -1).cuda().float()
+        return s, t, R
+        
+    def forward(self, batch_size=32, static=False):
+        if static:
+            s, t, R = self.get_static_offset(batch_size)
+        else:
+            s, t, R = self.get_random_offset(batch_size)
         R = R.reshape(batch_size, self.n_boxes, 3, 3)
         return s, t, R

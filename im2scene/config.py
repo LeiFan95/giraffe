@@ -1,16 +1,15 @@
+import os
+import h5py
 import yaml
 from im2scene import data
 from im2scene import gan2d, giraffe
 import logging
-import os
-
 
 # method directory; for this project we only use giraffe
 method_dict = {
     'gan2d': gan2d,
     'giraffe': giraffe,
 }
-
 
 # General config
 def load_config(path, default_path=None):
@@ -39,7 +38,6 @@ def load_config(path, default_path=None):
 
     # Include main configuration
     update_recursive(cfg, cfg_special)
-
     return cfg
 
 
@@ -134,7 +132,10 @@ def get_dataset(cfg, **kwargs):
     '''
     # Get fields with cfg
     dataset_name = cfg['data']['dataset_name']
+    idx_txt = cfg['data']['idx_txt']
     dataset_folder = cfg['data']['path']
+    h5_path = cfg['data']['h5_path']
+    relations = cfg['data']['relations']
     categories = cfg['data']['classes']
     img_size = cfg['data']['img_size']
 
@@ -143,11 +144,25 @@ def get_dataset(cfg, **kwargs):
                                  random_crop=cfg['data']['random_crop'],
                                  use_tanh_range=cfg['data']['use_tanh_range'],
                                  )
+    elif dataset_name == 'h36m':
+        dataset = data.H36MDataset(idx_txt, dataset_folder, h5_path,
+                                    image_size=img_size, use_tanh_range=cfg['data']['use_tanh_range'], 
+                                    relations=relations)
     else:
+        # print('cfg[model][num_parts]', cfg['model']['num_parts'])
+        # input()
         dataset = data.ImagesDataset(
             dataset_folder, size=img_size,
             use_tanh_range=cfg['data']['use_tanh_range'],
             celebA_center_crop=cfg['data']['celebA_center_crop'],
             random_crop=cfg['data']['random_crop'],
+            num_parts=cfg['model']['num_parts']
         )
+    return dataset
+
+def get_eval_dataset(cfg, **kwargs):
+    h5_path_eval = cfg['data']['h5_path_eval']
+    dataset = data.EvalDataset(
+        h5_path_eval
+    )
     return dataset

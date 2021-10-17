@@ -1,10 +1,8 @@
-
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
 import numpy as np
 from numpy import pi
-
 
 class Decoder(nn.Module):
     ''' Decoder class.

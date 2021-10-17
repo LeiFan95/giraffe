@@ -1,0 +1,46 @@
+# add pose estimator to the original version
+# add 3d pose encoder
+data:
+  dataset_name: h36m
+  idx_txt: /home/leifan/h36m-fetch/data/Human3.6/cropped/names.txt
+  path: /data/leifan/dataset/Human3.6/cropped/*/*/*.jpg
+  h5_path: /home/leifan/h36m-fetch/data/Human3.6/cropped/annot_new.h5
+  fid_file: /home/leifan/h36m-fetch/data/Human3.6/cropped/h36m_256.npz
+  relations: [[0, 1], [0, 4], [1, 2], [2, 3], [4, 5], [5, 6], 
+        [0, 7], [7, 8], [8, 11], [8, 14], [14, 15], 
+        [15, 16], [11, 12], [12, 13], [10, 9], [9, 8]]
+  img_size: 256
+  random_crop: False
+model:
+  background_generator_kwargs:
+    rgb_out_dim: 256
+  num_parts: 17
+  pose_estimator: simple
+  pose_encoder: simple
+  model_name: model.pt
+  bounding_box_generator_kwargs:
+    scale_range_min: [0.2, 0.2, 0.2]
+    scale_range_max: [0.2, 0.2, 0.2]
+    # scale_range_min: [0.1, 0.1, 0.1]
+    # scale_range_max: [0.1, 0.1, 0.1]
+    # scale_range_min: [0.00, 0.00, 0.00]
+    # scale_range_max: [0.00, 0.00, 0.00]
+    translation_range_min: [-0.03, -0.03, 0]
+    translation_range_max: [0.03, 0.03, 0]
+  generator_kwargs:
+    range_u: [0.0, 1.0]
+    range_v: [0.5, 0.5]
+    # range_v: [0.41667, 0.59]
+    fov: 10
+  neural_renderer_kwargs:
+    input_dim: 256
+    n_feat: 256
+  decoder_kwargs:
+    rgb_out_dim: 256
+training:
+  # out_dir: out/human_encoder
+  out_dir: out/unit_test_inverse_mask_256
+  multi_gpu: False
+  # validate_every: 10
+  visualize_every: 200
+  learning_rate: 0.00025

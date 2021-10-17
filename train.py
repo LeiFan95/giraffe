@@ -7,6 +7,7 @@ import argparse
 import time
 from im2scene import config
 from im2scene.checkpoints import CheckpointIO
+from im2scene.debugtool import save_3d_pose_image
 import logging
 logger_py = logging.getLogger(__name__)
 np.random.seed(0)
@@ -18,11 +19,13 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument('config', type=str, help='Path to config file.')
 parser.add_argument('--no-cuda', action='store_true', help='Do not use cuda.')
+parser.add_argument('--cuda_id', '-id', type=str, default='0', help='Available GPU index.')
 parser.add_argument('--exit-after', type=int, default=-1,
                     help='Checkpoint and exit after specified number of '
                          'seconds with exit code 2.')
 
 args = parser.parse_args()
+os.environ['CUDA_VISIBLE_DEVICES'] = args.cuda_id
 cfg = config.load_config(args.config, 'configs/default.yaml')
 is_cuda = (torch.cuda.is_available() and not args.no_cuda)
 device = torch.device("cuda" if is_cuda else "cpu")
@@ -33,6 +36,7 @@ backup_every = cfg['training']['backup_every']
 exit_after = args.exit_after
 lr = cfg['training']['learning_rate']
 lr_d = cfg['training']['learning_rate_d']
+lr_pose = cfg['training']['learning_rate_pose']
 batch_size = cfg['training']['batch_size']
 n_workers = cfg['training']['n_workers']
 t0 = time.time()
@@ -51,13 +55,19 @@ if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
 train_dataset = config.get_dataset(cfg)
+sampled_pose, sampled_pose_diff, sampled_skeleton = train_dataset.get_sampled_pose(16)
 train_loader = torch.utils.data.DataLoader(
     train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True,
     pin_memory=True, drop_last=True,
 )
 
-model = config.get_model(cfg, device=device, len_dataset=len(train_dataset))
+val_dataset = config.get_dataset(cfg)
+val_loader = torch.utils.data.DataLoader(
+    train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True,
+    pin_memory=True, drop_last=True,
+)
 
+model = config.get_model(cfg, device=device, len_dataset=len(train_dataset))
 
 # Initialize training
 op = optim.RMSprop if cfg['training']['optimizer'] == 'RMSprop' else optim.Adam
@@ -78,6 +88,15 @@ else:
 trainer = config.get_trainer(model, optimizer, optimizer_d, cfg, device=device)
 checkpoint_io = CheckpointIO(out_dir, model=model, optimizer=optimizer,
                              optimizer_d=optimizer_d)
+
+# save visualized 3D pose
+save_3d_pose_image(os.path.join(cfg['training']['out_dir'], 'vis'), 
+                    'pose_3d_1.png', 'sampled_pose', sampled_pose)
+save_3d_pose_image(os.path.join(cfg['training']['out_dir'], 'vis'), 
+                    'pose_3d_2.png', 'sampled_pose', sampled_pose, elev=10., azim=30.)
+save_3d_pose_image(os.path.join(cfg['training']['out_dir'], 'vis'), 
+                    'pose_3d_3.png', 'sampled_pose', sampled_pose, elev=0., azim=-90.)
+
 try:
     load_dict = checkpoint_io.load('model.pt')
     print("Loaded model checkpoint.")
@@ -103,26 +122,12 @@ checkpoint_every = cfg['training']['checkpoint_every']
 validate_every = cfg['training']['validate_every']
 visualize_every = cfg['training']['visualize_every']
 
-# Print model
-nparameters = sum(p.numel() for p in model.parameters())
-logger_py.info(model)
-logger_py.info('Total number of parameters: %d' % nparameters)
-
-if hasattr(model, "discriminator") and model.discriminator is not None:
-    nparameters_d = sum(p.numel() for p in model.discriminator.parameters())
-    logger_py.info(
-        'Total number of discriminator parameters: %d' % nparameters_d)
-if hasattr(model, "generator") and model.generator is not None:
-    nparameters_g = sum(p.numel() for p in model.generator.parameters())
-    logger_py.info('Total number of generator parameters: %d' % nparameters_g)
-
 t0b = time.time()
 
 while (True):
     epoch_it += 1
 
     for batch in train_loader:
-
         it += 1
         loss = trainer.train_step(batch, it)
         for (k, v) in loss.items():
@@ -139,7 +144,7 @@ while (True):
         # # Visualize output
         if visualize_every > 0 and (it % visualize_every) == 0:
             logger_py.info('Visualizing')
-            image_grid = trainer.visualize(it=it)
+            image_grid = trainer.visualize(sampled_tuple=[sampled_pose, sampled_pose_diff, sampled_skeleton], it=it)
             if image_grid is not None:
                 logger.add_image('images', image_grid, it)
 
@@ -159,7 +164,7 @@ while (True):
         # Run validation
         if validate_every > 0 and (it % validate_every) == 0 and (it > 0):
             print("Performing evaluation step.")
-            eval_dict = trainer.evaluate()
+            eval_dict = trainer.evaluate(val_loader)
             metric_val = eval_dict[model_selection_metric]
             logger_py.info('Validation metric (%s): %.4f'
                            % (model_selection_metric, metric_val))
